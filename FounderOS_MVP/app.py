@@ -146,17 +146,8 @@ button[kind="secondary"]:hover {
 .stMultiSelect div[data-baseweb="select"] > div {
   background: var(--fos-card) !important;
   color: var(--fos-text) !important;
-  border: 1px solid var(--fos-border) !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
+  border-color: var(--fos-border) !important;
 }
-
-.stTextInput input:focus,
-.stTextArea textarea:focus {
-  border: 1px solid var(--fos-accent) !important;
-  box-shadow: 0 0 0 1px var(--fos-accent) !important;
-}
-
 .stTextInput input::placeholder,
 .stTextArea textarea::placeholder {
   color: var(--fos-muted) !important;
@@ -730,7 +721,7 @@ def render_dashboard():
             ("Understand", "Recognizes sales, expenses, inventory, and customer records from the files you provide."),
             ("Calculate", "Uses Pandas-based calculations for revenue, expenses, profit, margins, trends, stock, and customer metrics when available."),
             ("Analyze", "Runs Financial Intelligence and Operations Intelligence against the actual uploaded data."),
-            ("Prioritize", "The Strategy layer converts evidence into a short list of actions instead of overwhelming you with generic business advice."),
+            ("Prioritize", "The Strategy layer converts evidence into a short list of actions instead of overwhelming you with generic advice."),
             ("Ask", "AI Advisor lets you ask follow-up questions using the saved business context."),
         ])
         st.markdown('<div class="fos-card fos-card-gold"><b>Navigation promise</b><p class="fos-muted">Changing sections does not clear your uploaded records. Your current session keeps the workspace until you log out or the Streamlit session ends.</p></div>', unsafe_allow_html=True)
