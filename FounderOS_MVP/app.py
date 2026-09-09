@@ -60,7 +60,7 @@ with left:
         value=st.session_state.get("business_goal", ""),
         placeholder="e.g. Increase profit, reduce expenses, improve sales",
     )
-    st.session_state.business_goal = goal.strip() or None
+    st.session_state.business_goal = (goal or "").strip() or None
 
     if uploaded:
         st.markdown("#### Files ready for analysis")
