@@ -76,316 +76,247 @@ def inject_fos_css():
     st.markdown(
         """
 <style>
-/* FounderOS theme-only CSS. Application logic, state, data processing and layout are untouched. */
-
-/* Exact brand tokens for the two requested themes. */
-[data-theme="dark"] {
-  --background-color: #0A1128;
-  --text-color: #F4F4F6;
-  --secondary-background-color: #1C2541;
-  --secondary-text-color: #F4F4F6;
-  --primary-color: #D4AF37;
-  --input-border-color: #1C2541;
-  --input-focus-color: #D4AF37;
-  --card-border-color: #1C2541;
+/* FounderOS theme-safe visual system ------------------------------------
+   All text colors use Streamlit's live theme variables so Light/Dark mode
+   changes do not produce invisible text. The palette remains consistent by
+   mapping FounderOS roles to Streamlit's theme roles.
+*/
+:root {
+  --fos-bg: var(--background-color);
+  --fos-text: var(--text-color);
+  --fos-card: var(--secondary-background-color);
+  --fos-accent: var(--primary-color);
+  --fos-border: color-mix(in srgb, var(--text-color) 16%, transparent);
+  --fos-muted: color-mix(in srgb, var(--text-color) 68%, var(--background-color) 32%);
+  --fos-soft: color-mix(in srgb, var(--primary-color) 12%, var(--background-color) 88%);
+  --fos-accent-contrast: var(--background-color);
 }
 
-[data-theme="light"] {
-  --background-color: #F0F4F8;
-  --text-color: #0F2537;
-  --secondary-background-color: #F0F4F8;
-  --secondary-text-color: #627D98;
-  --primary-color: #185ADB;
-  --input-border-color: #627D98;
-  --input-focus-color: #185ADB;
-  --card-border-color: #627D98;
-}
-
-/* Streamlit versions/themes that expose the variables on a higher ancestor. */
 .stApp {
-  background: var(--background-color, #0A1128) !important;
-  color: var(--text-color, #F4F4F6) !important;
+  background: var(--fos-bg) !important;
+  color: var(--fos-text) !important;
 }
-
-/* Top Streamlit header/chrome: unified with FounderOS instead of a white strip. */
-[data-theme="dark"] header[data-testid="stHeader"],
-[data-theme="light"] header[data-testid="stHeader"] {
-  background: var(--background-color) !important;
-  color: var(--text-color) !important;
-}
-[data-theme="dark"] header[data-testid="stHeader"] button,
-[data-theme="light"] header[data-testid="stHeader"] button,
-[data-theme="dark"] header[data-testid="stHeader"] svg,
-[data-theme="light"] header[data-testid="stHeader"] svg {
-  color: var(--text-color) !important;
-  fill: currentColor !important;
-  stroke: currentColor !important;
-}
-[data-theme="dark"] header[data-testid="stHeader"] button:hover,
-[data-theme="light"] header[data-testid="stHeader"] button:hover {
-  background: var(--secondary-background-color) !important;
-}
-
-/* Main page and sidebar */
 .block-container {
   max-width: 1450px;
   padding-top: 2rem;
   padding-bottom: 4rem;
 }
+
+/* Hide Streamlit's automatic page list. FounderOS uses its own clean menu. */
 [data-testid="stSidebarNav"] { display: none !important; }
-[data-theme="dark"] [data-testid="stSidebar"],
-[data-theme="light"] [data-testid="stSidebar"] {
-  background: var(--background-color) !important;
-  border-right: 1px solid var(--primary-color) !important;
+
+[data-testid="stSidebar"] {
+  background: var(--fos-bg) !important;
+  border-right: 1px solid var(--fos-border) !important;
 }
-[data-theme="dark"] [data-testid="stSidebar"] *,
-[data-theme="light"] [data-testid="stSidebar"] * {
-  color: var(--text-color) !important;
+[data-testid="stSidebar"] * { color: var(--fos-text) !important; }
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--fos-text) !important;
+  letter-spacing: -0.025em;
+}
+p, label, .stMarkdown, .stCaption, .stText, small {
+  color: var(--fos-text) !important;
 }
 
-/* Native Streamlit typography. */
-[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
-[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6,
-[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3,
-[data-theme="light"] h4, [data-theme="light"] h5, [data-theme="light"] h6,
-[data-theme="dark"] [data-testid="stMarkdownContainer"] p,
-[data-theme="light"] [data-testid="stMarkdownContainer"] p,
-[data-theme="dark"] label, [data-theme="light"] label {
-  color: var(--text-color) !important;
-}
-[data-theme="dark"] [data-testid="stCaptionContainer"],
-[data-theme="light"] [data-testid="stCaptionContainer"],
-[data-theme="dark"] .stCaption, [data-theme="light"] .stCaption {
-  color: var(--secondary-text-color) !important;
-}
-[data-theme="dark"] a, [data-theme="dark"] a:visited,
-[data-theme="light"] a, [data-theme="light"] a:visited {
-  color: var(--primary-color) !important;
-}
-
-/* Buttons/CTAs: text uses the theme token, never a fixed black/white value. */
-[data-theme="dark"] .stButton > button,
-[data-theme="light"] .stButton > button,
-[data-theme="dark"] .stDownloadButton > button,
-[data-theme="light"] .stDownloadButton > button,
-[data-theme="dark"] [data-testid="stFormSubmitButton"] button,
-[data-theme="light"] [data-testid="stFormSubmitButton"] button,
-[data-theme="dark"] button[kind="primary"],
-[data-theme="light"] button[kind="primary"],
-[data-theme="dark"] button[kind="secondary"],
-[data-theme="light"] button[kind="secondary"] {
-  color: var(--text-color) !important;
-  background: var(--secondary-background-color) !important;
-  border: 1px solid var(--primary-color) !important;
+/* Buttons --------------------------------------------------------------- */
+.stButton > button,
+.stDownloadButton > button,
+button[kind="primary"],
+button[kind="secondary"] {
+  color: var(--fos-text) !important;
+  background: var(--fos-card) !important;
+  border: 1px solid color-mix(in srgb, var(--fos-accent) 62%, transparent) !important;
   border-radius: 10px !important;
   font-weight: 700 !important;
 }
-[data-theme="dark"] .stButton > button:hover,
-[data-theme="dark"] .stDownloadButton > button:hover,
-[data-theme="dark"] [data-testid="stFormSubmitButton"] button:hover,
-[data-theme="dark"] button[kind="primary"]:hover,
-[data-theme="dark"] button[kind="secondary"]:hover,
-[data-theme="light"] .stButton > button:hover,
-[data-theme="light"] .stDownloadButton > button:hover,
-[data-theme="light"] [data-testid="stFormSubmitButton"] button:hover,
-[data-theme="light"] button[kind="primary"]:hover,
-[data-theme="light"] button[kind="secondary"]:hover {
-  color: var(--background-color) !important;
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+.stButton > button:hover,
+.stDownloadButton > button:hover,
+button[kind="primary"]:hover,
+button[kind="secondary"]:hover {
+  color: var(--fos-accent-contrast) !important;
+  background: var(--fos-accent) !important;
+  border-color: var(--fos-accent) !important;
 }
 
-/* Inputs: requested slate/gold borders in dark and slate/cobalt in light. */
-[data-theme="dark"] .stTextInput input,
-[data-theme="dark"] .stTextArea textarea,
-[data-theme="dark"] [data-baseweb="input"] input,
-[data-theme="dark"] [data-baseweb="textarea"] textarea,
-[data-theme="dark"] .stSelectbox [data-baseweb="select"] > div,
-[data-theme="dark"] .stMultiSelect [data-baseweb="select"] > div,
-[data-theme="light"] .stTextInput input,
-[data-theme="light"] .stTextArea textarea,
-[data-theme="light"] [data-baseweb="input"] input,
-[data-theme="light"] [data-baseweb="textarea"] textarea,
-[data-theme="light"] .stSelectbox [data-baseweb="select"] > div,
-[data-theme="light"] .stMultiSelect [data-baseweb="select"] > div {
-  background: var(--secondary-background-color) !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--input-border-color) !important;
-  box-shadow: none !important;
+/* Inputs ---------------------------------------------------------------- */
+.stTextInput input,
+.stTextArea textarea,
+.stSelectbox div[data-baseweb="select"] > div,
+.stMultiSelect div[data-baseweb="select"] > div {
+  background: var(--fos-card) !important;
+  color: var(--fos-text) !important;
+  border-color: var(--fos-border) !important;
 }
-[data-theme="dark"] .stTextInput input:focus,
-[data-theme="dark"] .stTextArea textarea:focus,
-[data-theme="dark"] [data-baseweb="input"] input:focus,
-[data-theme="dark"] [data-baseweb="textarea"] textarea:focus,
-[data-theme="light"] .stTextInput input:focus,
-[data-theme="light"] .stTextArea textarea:focus,
-[data-theme="light"] [data-baseweb="input"] input:focus,
-[data-theme="light"] [data-baseweb="textarea"] textarea:focus {
-  border-color: var(--input-focus-color) !important;
-  box-shadow: 0 0 0 1px var(--input-focus-color) !important;
-  outline: none !important;
-}
-[data-theme="dark"] input::placeholder, [data-theme="dark"] textarea::placeholder,
-[data-theme="light"] input::placeholder, [data-theme="light"] textarea::placeholder {
-  color: var(--secondary-text-color) !important;
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+  color: var(--fos-muted) !important;
   opacity: 1 !important;
 }
 
-/* File uploader: readable in both modes, including uploaded-file chips. */
-[data-theme="dark"] [data-testid="stFileUploader"],
-[data-theme="light"] [data-testid="stFileUploader"] {
-  background: var(--secondary-background-color) !important;
-  border: 1px dashed var(--input-border-color) !important;
+/* File uploader: keep filenames/details readable in both themes. */
+[data-testid="stFileUploader"] {
+  background: var(--fos-card) !important;
+  border: 1px dashed color-mix(in srgb, var(--fos-accent) 68%, transparent) !important;
   border-radius: 14px !important;
 }
-[data-theme="dark"] [data-testid="stFileUploader"] *,
-[data-theme="light"] [data-testid="stFileUploader"] * {
-  color: var(--text-color) !important;
+[data-testid="stFileUploader"] * {
+  color: var(--fos-text) !important;
 }
-[data-theme="dark"] [data-testid="stFileUploader"] small,
-[data-theme="light"] [data-testid="stFileUploader"] small {
-  color: var(--secondary-text-color) !important;
+[data-testid="stFileUploaderDropzone"] {
+  background: var(--fos-card) !important;
 }
-[data-theme="dark"] [data-testid="stFileUploaderDropzone"],
-[data-theme="light"] [data-testid="stFileUploaderDropzone"] {
-  background: var(--secondary-background-color) !important;
-  border-color: var(--input-border-color) !important;
+[data-testid="stFileUploaderFile"] {
+  background: var(--fos-bg) !important;
+  border-color: var(--fos-border) !important;
 }
-[data-theme="dark"] [data-testid="stFileUploader"] [data-baseweb="tag"],
-[data-theme="light"] [data-testid="stFileUploader"] [data-baseweb="tag"],
-[data-theme="dark"] [data-testid="stFileUploader"] [role="listitem"],
-[data-theme="light"] [data-testid="stFileUploader"] [role="listitem"] {
-  background: var(--secondary-background-color) !important;
-  border: 1px solid var(--input-border-color) !important;
-}
-[data-theme="dark"] [data-testid="stFileUploader"] [data-baseweb="tag"] *,
-[data-theme="light"] [data-testid="stFileUploader"] [data-baseweb="tag"] *,
-[data-theme="dark"] [data-testid="stFileUploader"] [role="listitem"] *,
-[data-theme="light"] [data-testid="stFileUploader"] [role="listitem"] * {
-  color: var(--text-color) !important;
+[data-testid="stFileUploaderFile"] * {
+  color: var(--fos-text) !important;
 }
 
-/* BaseWeb select/dropdown menus. They may be rendered outside the selectbox. */
-[data-theme="dark"] [data-baseweb="popover"],
-[data-theme="dark"] [role="listbox"],
-[data-theme="dark"] [role="option"],
-[data-theme="dark"] [data-baseweb="menu"] {
-  background: var(--secondary-background-color) !important;
-  color: var(--text-color) !important;
-}
-[data-theme="light"] [data-baseweb="popover"],
-[data-theme="light"] [role="listbox"],
-[data-theme="light"] [role="option"],
-[data-theme="light"] [data-baseweb="menu"] {
-  background: var(--background-color) !important;
-  color: var(--text-color) !important;
-}
-[data-theme="dark"] [role="option"]:hover,
-[data-theme="dark"] [role="option"][aria-selected="true"],
-[data-theme="light"] [role="option"]:hover,
-[data-theme="light"] [role="option"][aria-selected="true"] {
-  background: var(--primary-color) !important;
-  color: var(--background-color) !important;
-}
-[data-baseweb="popover"] *, [role="listbox"] *, [role="option"] * {
-  color: inherit !important;
-}
-
-/* Metrics, cards, expanders and other existing visual components. */
-[data-theme="dark"] [data-testid="stMetric"],
-[data-theme="light"] [data-testid="stMetric"] {
-  background: var(--secondary-background-color) !important;
-  border: 1px solid var(--card-border-color) !important;
+/* Native Streamlit metrics --------------------------------------------- */
+[data-testid="stMetric"] {
+  background: var(--fos-card) !important;
+  border: 1px solid var(--fos-border) !important;
   border-radius: 14px;
   padding: 16px;
 }
-[data-theme="dark"] [data-testid="stMetricLabel"], [data-theme="light"] [data-testid="stMetricLabel"] {
-  color: var(--secondary-text-color) !important;
-}
-[data-theme="dark"] [data-testid="stMetricValue"], [data-theme="light"] [data-testid="stMetricValue"] {
-  color: var(--text-color) !important;
-}
-[data-theme="dark"] .fos-card, [data-theme="light"] .fos-card,
-[data-theme="dark"] .fos-feature, [data-theme="light"] .fos-feature,
-[data-theme="dark"] .fos-status, [data-theme="light"] .fos-status,
-[data-theme="dark"] .fos-purpose, [data-theme="light"] .fos-purpose {
-  background: var(--secondary-background-color) !important;
-  border-color: var(--card-border-color) !important;
-}
-[data-theme="dark"] .fos-card-gold, [data-theme="light"] .fos-card-gold {
-  border-color: var(--primary-color) !important;
-}
-[data-theme="dark"] .fos-card *, [data-theme="light"] .fos-card *,
-[data-theme="dark"] .fos-feature *, [data-theme="light"] .fos-feature *,
-[data-theme="dark"] .fos-status *, [data-theme="light"] .fos-status *,
-[data-theme="dark"] .fos-purpose *, [data-theme="light"] .fos-purpose * {
-  color: var(--text-color);
-}
-[data-theme="dark"] .fos-muted, [data-theme="light"] .fos-muted,
-[data-theme="dark"] .fos-feature-text, [data-theme="light"] .fos-feature-text,
-[data-theme="dark"] .fos-purpose span, [data-theme="light"] .fos-purpose span,
-[data-theme="dark"] .fos-nav-label, [data-theme="light"] .fos-nav-label {
-  color: var(--secondary-text-color) !important;
-}
-[data-theme="dark"] .fos-gold, [data-theme="light"] .fos-gold,
-[data-theme="dark"] .fos-nav-current, [data-theme="light"] .fos-nav-current,
-[data-theme="dark"] .fos-feature-mark, [data-theme="light"] .fos-feature-mark {
-  color: var(--primary-color) !important;
-}
-[data-theme="dark"] .fos-kpi, [data-theme="light"] .fos-kpi,
-[data-theme="dark"] .fos-auth-title, [data-theme="light"] .fos-auth-title,
-[data-theme="dark"] .fos-feature-title, [data-theme="light"] .fos-feature-title,
-[data-theme="dark"] .fos-purpose strong, [data-theme="light"] .fos-purpose strong {
-  color: var(--text-color) !important;
-}
-[data-theme="dark"] .fos-pill, [data-theme="light"] .fos-pill {
-  color: var(--text-color) !important;
-  border-color: var(--primary-color) !important;
-}
-[data-theme="dark"] .fos-section-note, [data-theme="light"] .fos-section-note {
-  color: var(--secondary-text-color) !important;
-  border-left-color: var(--primary-color) !important;
-}
-[data-theme="dark"] .fos-empty, [data-theme="light"] .fos-empty {
-  background: var(--secondary-background-color) !important;
-  border-color: var(--card-border-color) !important;
-}
-[data-theme="dark"] [data-testid="stExpander"],
-[data-theme="light"] [data-testid="stExpander"] {
-  background: var(--secondary-background-color) !important;
-  border-color: var(--card-border-color) !important;
-}
-[data-theme="dark"] [data-testid="stExpander"] *,
-[data-theme="light"] [data-testid="stExpander"] * {
-  color: var(--text-color);
-}
-[data-theme="dark"] [data-baseweb="tab"], [data-theme="light"] [data-baseweb="tab"] {
-  color: var(--secondary-text-color) !important;
-}
-[data-theme="dark"] [data-baseweb="tab"][aria-selected="true"],
-[data-theme="light"] [data-baseweb="tab"][aria-selected="true"] {
-  color: var(--primary-color) !important;
-}
-[data-theme="dark"] [data-testid="stDataFrame"],
-[data-theme="light"] [data-testid="stDataFrame"] {
-  border-color: var(--card-border-color) !important;
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"] {
+  color: var(--fos-text) !important;
 }
 
-/* Native alerts inherit the active theme instead of Streamlit's default text. */
-[data-theme="dark"] [data-testid="stAlert"],
-[data-theme="light"] [data-testid="stAlert"] {
-  color: var(--text-color) !important;
+/* Custom FounderOS cards ------------------------------------------------ */
+.fos-card {
+  background: var(--fos-card);
+  border: 1px solid var(--fos-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--text-color) 12%, transparent);
+  margin-bottom: 14px;
 }
-[data-theme="dark"] [data-testid="stAlert"] *,
-[data-theme="light"] [data-testid="stAlert"] * {
-  color: inherit !important;
+.fos-card-gold { border-color: color-mix(in srgb, var(--fos-accent) 48%, transparent); }
+.fos-card h3, .fos-card h4 { margin-top: 0; }
+.fos-muted { color: var(--fos-muted) !important; }
+.fos-gold { color: var(--fos-accent) !important; }
+.fos-small { font-size: .86rem; }
+.fos-kpi { font-size: 2rem; font-weight: 800; color: var(--fos-text); margin: 3px 0; }
+.fos-pill {
+  display:inline-block; padding:5px 10px; border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--fos-accent) 50%, transparent);
+  color: var(--fos-text);
+  background: var(--fos-soft);
+  font-size:.78rem; font-weight:700;
+}
+.fos-brand {
+  display:flex; align-items:center; gap:12px; margin-bottom:8px;
+}
+.fos-logo {
+  width:48px; height:48px; border-radius:13px; display:flex;
+  align-items:center; justify-content:center; background:var(--fos-bg);
+  border:1px solid var(--fos-accent); color:var(--fos-accent); font-weight:900;
+  letter-spacing:-.06em; font-size:14px;
+  box-shadow:0 8px 20px color-mix(in srgb, var(--text-color) 14%, transparent);
+}
+.fos-auth-logo {
+  width:64px; height:64px; border-radius:17px; display:flex;
+  align-items:center; justify-content:center; background:var(--fos-bg);
+  border:1px solid var(--fos-accent); color:var(--fos-accent); font-weight:900;
+  letter-spacing:-.08em; font-size:18px; margin-bottom:16px;
+}
+.fos-auth-wrap { padding-top: 7vh; }
+.fos-auth-title { font-size: 3.1rem; line-height:1; font-weight:900; margin:0; color:var(--fos-text); }
+.fos-auth-sub { font-size:1.05rem; color:var(--fos-muted); margin-top:10px; max-width:600px; }
+.fos-feature {
+  background: var(--fos-card); border:1px solid color-mix(in srgb, var(--fos-accent) 24%, transparent);
+  border-radius:16px; padding:18px; min-height:115px; margin-bottom:12px;
+}
+.fos-feature-title { color:var(--fos-text); font-weight:800; font-size:1rem; }
+.fos-feature-text { color:var(--fos-muted); margin-top:6px; font-size:.9rem; line-height:1.45; }
+.fos-feature-mark {
+  width:32px; height:32px; display:inline-flex; align-items:center;
+  justify-content:center; border-radius:9px; background:var(--fos-soft);
+  color:var(--fos-accent); font-weight:900; margin-bottom:10px;
+}
+.fos-nav-label { color:var(--fos-muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.14em; }
+.fos-nav-current { color:var(--fos-accent); font-weight:800; }
+.fos-status {
+  border-radius:12px; padding:12px 14px; background:var(--fos-card);
+  border:1px solid color-mix(in srgb, var(--fos-accent) 25%, transparent); margin:8px 0 14px;
+}
+.fos-purpose {
+  background: var(--fos-card);
+  border:1px solid color-mix(in srgb, var(--fos-accent) 20%, transparent); border-radius:14px;
+  padding:15px; margin-bottom:10px;
+}
+.fos-purpose strong { color:var(--fos-text); }
+.fos-purpose span { color:var(--fos-muted); font-size:.87rem; }
+.fos-section-note {
+  border-left:3px solid var(--fos-accent); padding:8px 12px; color:var(--fos-text);
+  background:var(--fos-soft); border-radius:0 9px 9px 0;
+}
+.fos-empty {
+  text-align:center; padding:42px 24px; border:1px dashed var(--fos-border);
+  border-radius:16px; background:var(--fos-card);
 }
 
-/* FOS logos retain the exact midnight/navy brand mark while the surrounding text adapts. */
-.fos-logo, .fos-auth-logo {
-  background: #0A1128 !important;
-  border-color: var(--primary-color) !important;
-  color: var(--primary-color) !important;
+/* Expander and tabs ----------------------------------------------------- */
+[data-testid="stExpander"] {
+  background:var(--fos-card) !important;
+  border-color:var(--fos-border) !important;
+}
+[data-testid="stExpander"] * { color:var(--fos-text) !important; }
+[data-baseweb="tab-list"] { gap:8px; }
+[data-baseweb="tab"] { color:var(--fos-muted) !important; }
+[data-baseweb="tab"][aria-selected="true"] { color:var(--fos-accent) !important; }
+
+/* Dropdown/popover options --------------------------------------------- */
+[data-baseweb="popover"] *,
+[data-baseweb="menu"] *,
+[role="listbox"] *,
+[role="option"] * {
+  color: var(--fos-text) !important;
+}
+[data-baseweb="popover"],
+[data-baseweb="menu"],
+[role="listbox"] {
+  background: var(--fos-card) !important;
+  border-color: var(--fos-border) !important;
+}
+[role="option"] {
+  background: var(--fos-card) !important;
+}
+[role="option"]:hover,
+[role="option"][aria-selected="true"] {
+  background: var(--fos-soft) !important;
+}
+
+/* Dataframes ------------------------------------------------------------ */
+[data-testid="stDataFrame"] {
+  border:1px solid var(--fos-border); border-radius:12px; overflow:hidden;
+}
+
+/* Top Streamlit chrome / toolbar --------------------------------------- */
+[data-testid="stHeader"] {
+  background: var(--fos-bg) !important;
+}
+[data-testid="stToolbar"] * {
+  color: var(--fos-text) !important;
+}
+[data-testid="stToolbar"] button {
+  color: var(--fos-text) !important;
+  background: var(--fos-card) !important;
+  border-color: var(--fos-border) !important;
+}
+
+/* Links and interactive text ------------------------------------------- */
+a { color: var(--fos-accent) !important; }
+
+/* Native widgets should inherit the live theme rather than a fixed text
+   color. This keeps the FounderOS palette readable in both modes. */
+input, textarea, select, option {
+  color: var(--fos-text) !important;
 }
 </style>
         """,
@@ -766,7 +697,7 @@ def render_dashboard():
                     if not d.empty:
                         monthly = d.assign(period=d[dc].dt.to_period("M").astype(str)).groupby("period")[ac].sum().reset_index()
                         fig = px.line(monthly, x="period", y=ac, markers=True, title="Revenue trend")
-                        fig.update_layout(margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                        fig.update_layout(margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                         st.plotly_chart(fig, use_container_width=True)
 
             strategy = a.get("strategy", {})
@@ -847,7 +778,7 @@ def render_finance():
                 if not d.empty:
                     monthly = d.assign(period=d[dc].dt.to_period("M").astype(str)).groupby("period")[ac].sum().reset_index()
                     fig = px.line(monthly, x="period", y=ac, markers=True, title="Revenue trend")
-                    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                     st.plotly_chart(fig, use_container_width=True)
         if expenses is not None:
             ec, ac = find_column(expenses, "category"), find_column(expenses, "amount")
@@ -855,7 +786,7 @@ def render_finance():
                 x = expenses.copy(); x[ac] = pd.to_numeric(x[ac], errors="coerce").fillna(0)
                 cat = x.groupby(ec)[ac].sum().sort_values(ascending=False).reset_index()
                 fig = px.bar(cat, x=ec, y=ac, title="Expenses by category")
-                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                 st.plotly_chart(fig, use_container_width=True)
     with right:
         st.subheader("What you get here")
@@ -903,7 +834,7 @@ def render_inventory():
                 x = df.copy(); x[qty] = pd.to_numeric(x[qty], errors="coerce").fillna(0)
                 grouped = x.groupby(product)[qty].sum().sort_values().head(15).reset_index()
                 fig = px.bar(grouped, x=qty, y=product, orientation="h", title="Products with the lowest stock")
-                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                 st.plotly_chart(fig, use_container_width=True)
             if facts.get("inventory_cost_value") is None:
                 st.info("Inventory value is not calculated because a reliable purchase/unit-cost field was not found.")
