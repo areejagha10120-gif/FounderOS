@@ -76,96 +76,57 @@ def inject_fos_css():
     st.markdown(
         """
 <style>
-/* =========================================================================
-   FounderOS visual system
-   Uses Streamlit's own theme variables where possible so the same UI remains
-   readable in both Streamlit Light and Dark modes.
-   ========================================================================= */
+/* FounderOS theme-safe visual system ------------------------------------
+   All text colors use Streamlit's live theme variables so Light/Dark mode
+   changes do not produce invisible text. The palette remains consistent by
+   mapping FounderOS roles to Streamlit's theme roles.
+*/
 :root {
-  --fos-navy: #0A1128;
-  --fos-cream: #F4F4F6;
-  --fos-slate: #1C2541;
-  --fos-gold: #D4AF37;
-  --fos-gold-soft: #E5C866;
-  --fos-light-bg: #F0F4F8;
-  --fos-sapphire: #0F2537;
-  --fos-gray: #627D98;
-  --fos-cobalt: #185ADB;
+  --fos-bg: var(--background-color);
+  --fos-text: var(--text-color);
+  --fos-card: var(--secondary-background-color);
+  --fos-accent: var(--primary-color);
+  --fos-border: color-mix(in srgb, var(--text-color) 16%, transparent);
+  --fos-muted: color-mix(in srgb, var(--text-color) 68%, var(--background-color) 32%);
+  --fos-soft: color-mix(in srgb, var(--primary-color) 12%, var(--background-color) 88%);
+  --fos-accent-contrast: var(--background-color);
 }
 
-/* ---------- Global canvas ---------- */
 .stApp {
-  background: var(--background-color, #0A1128) !important;
-  color: var(--text-color, #F4F4F6) !important;
+  background: var(--fos-bg) !important;
+  color: var(--fos-text) !important;
 }
 .block-container {
   max-width: 1450px;
-  padding-top: 1.35rem;
+  padding-top: 2rem;
   padding-bottom: 4rem;
 }
 
-/* ---------- Streamlit top header / toolbar ----------
-   The Cloud Share/Edit/GitHub controls are platform controls. We keep them,
-   but make the header match FounderOS instead of leaving a white strip. */
-header[data-testid="stHeader"],
-[data-testid="stHeader"] {
-  background: #0A1128 !important;
-  border-bottom: 1px solid rgba(212,175,55,.20) !important;
-}
-[data-testid="stToolbar"] {
-  background: #0A1128 !important;
-  border-radius: 10px !important;
-}
-header[data-testid="stHeader"] button,
-header[data-testid="stHeader"] [role="button"],
-[data-testid="stToolbar"] button,
-[data-testid="stToolbar"] [role="button"] {
-  color: #F4F4F6 !important;
-}
-header[data-testid="stHeader"] svg,
-[data-testid="stToolbar"] svg {
-  color: #D4AF37 !important;
-  fill: currentColor !important;
-}
-header[data-testid="stHeader"] button:hover,
-[data-testid="stToolbar"] button:hover {
-  background: #1C2541 !important;
-  color: #D4AF37 !important;
-}
-
-/* ---------- Sidebar ---------- */
-[data-testid="stSidebar"] {
-  background: #0A1128 !important;
-  border-right: 1px solid rgba(212,175,55,.18) !important;
-}
-[data-testid="stSidebar"] * {
-  color: #F4F4F6;
-}
+/* Hide Streamlit's automatic page list. FounderOS uses its own clean menu. */
 [data-testid="stSidebarNav"] { display: none !important; }
 
-/* ---------- Headings and body text ----------
-   Use Streamlit's theme text variable so light mode becomes dark text. */
+[data-testid="stSidebar"] {
+  background: var(--fos-bg) !important;
+  border-right: 1px solid var(--fos-border) !important;
+}
+[data-testid="stSidebar"] * { color: var(--fos-text) !important; }
+
 h1, h2, h3, h4, h5, h6 {
-  color: var(--text-color, #F4F4F6) !important;
+  color: var(--fos-text) !important;
   letter-spacing: -0.025em;
 }
-p, label, .stMarkdown, .stCaption {
-  color: var(--text-color, #F4F4F6);
-}
-.stCaption, [data-testid="stCaptionContainer"] {
-  color: var(--text-color, #F4F4F6) !important;
-  opacity: .78;
+p, label, .stMarkdown, .stCaption, .stText, small {
+  color: var(--fos-text) !important;
 }
 
-/* ---------- Buttons ----------
-   Keep the CTA gold with dark text; secondary buttons use the slate theme. */
+/* Buttons --------------------------------------------------------------- */
 .stButton > button,
 .stDownloadButton > button,
 button[kind="primary"],
 button[kind="secondary"] {
-  color: #F4F4F6 !important;
-  background: #1C2541 !important;
-  border: 1px solid rgba(212,175,55,.55) !important;
+  color: var(--fos-text) !important;
+  background: var(--fos-card) !important;
+  border: 1px solid color-mix(in srgb, var(--fos-accent) 62%, transparent) !important;
   border-radius: 10px !important;
   font-weight: 700 !important;
 }
@@ -173,290 +134,197 @@ button[kind="secondary"] {
 .stDownloadButton > button:hover,
 button[kind="primary"]:hover,
 button[kind="secondary"]:hover {
-  color: #0A1128 !important;
-  background: #D4AF37 !important;
-  border-color: #D4AF37 !important;
-}
-button[kind="primary"] {
-  background: #D4AF37 !important;
-  color: #0A1128 !important;
-  border-color: #D4AF37 !important;
-}
-button[kind="primary"]:hover {
-  background: #E5C866 !important;
+  color: var(--fos-accent-contrast) !important;
+  background: var(--fos-accent) !important;
+  border-color: var(--fos-accent) !important;
 }
 
-/* ---------- Text inputs ---------- */
+/* Inputs ---------------------------------------------------------------- */
 .stTextInput input,
-.stTextArea textarea {
-  background: var(--secondary-background-color, #1C2541) !important;
-  color: var(--text-color, #F4F4F6) !important;
-  border: 1px solid rgba(212,175,55,.28) !important;
+.stTextArea textarea,
+.stSelectbox div[data-baseweb="select"] > div,
+.stMultiSelect div[data-baseweb="select"] > div {
+  background: var(--fos-card) !important;
+  color: var(--fos-text) !important;
+  border-color: var(--fos-border) !important;
 }
 .stTextInput input::placeholder,
 .stTextArea textarea::placeholder {
-  color: var(--text-color, #F4F4F6) !important;
-  opacity: .55;
+  color: var(--fos-muted) !important;
+  opacity: 1 !important;
 }
 
-/* ---------- File uploader ----------
-   This is the main visibility fix. Streamlit renders the selected-file
-   chips/cards inside the uploader; give those elements an explicit
-   theme-aware background and text color. */
+/* File uploader: keep filenames/details readable in both themes. */
 [data-testid="stFileUploader"] {
-  background: var(--secondary-background-color, #1C2541) !important;
-  border: 1px dashed rgba(212,175,55,.65) !important;
+  background: var(--fos-card) !important;
+  border: 1px dashed color-mix(in srgb, var(--fos-accent) 68%, transparent) !important;
   border-radius: 14px !important;
-  overflow: hidden !important;
 }
-[data-testid="stFileUploader"] section {
-  background: var(--secondary-background-color, #1C2541) !important;
+[data-testid="stFileUploader"] * {
+  color: var(--fos-text) !important;
 }
-[data-testid="stFileUploader"] section > div {
-  color: var(--text-color, #F4F4F6) !important;
+[data-testid="stFileUploaderDropzone"] {
+  background: var(--fos-card) !important;
 }
-[data-testid="stFileUploader"] button {
-  color: #0A1128 !important;
-  background: #D4AF37 !important;
-  border-color: #D4AF37 !important;
+[data-testid="stFileUploaderFile"] {
+  background: var(--fos-bg) !important;
+  border-color: var(--fos-border) !important;
 }
-[data-testid="stFileUploader"] small,
-[data-testid="stFileUploader"] label,
-[data-testid="stFileUploader"] span,
-[data-testid="stFileUploader"] p {
-  color: var(--text-color, #F4F4F6) !important;
-}
-/* Selected/uploaded file rows/chips */
-[data-testid="stFileUploaderFile"],
-[data-testid="stFileUploaderFile"] > div {
-  background: var(--background-color, #0A1128) !important;
-  color: var(--text-color, #F4F4F6) !important;
-  border-color: rgba(212,175,55,.25) !important;
-}
-[data-testid="stFileUploaderFile"] *,
-[data-testid="stFileUploaderFile"] span,
-[data-testid="stFileUploaderFile"] small,
-[data-testid="stFileUploaderFile"] p {
-  color: var(--text-color, #F4F4F6) !important;
+[data-testid="stFileUploaderFile"] * {
+  color: var(--fos-text) !important;
 }
 
-/* ---------- Dropdown / selectbox ----------
-   Both the closed control and the popup options receive explicit colors. */
-.stSelectbox div[data-baseweb="select"] > div,
-.stMultiSelect div[data-baseweb="select"] > div {
-  background: var(--secondary-background-color, #1C2541) !important;
-  color: var(--text-color, #F4F4F6) !important;
-  border-color: rgba(212,175,55,.30) !important;
-}
-.stSelectbox div[data-baseweb="select"] span,
-.stMultiSelect div[data-baseweb="select"] span {
-  color: var(--text-color, #F4F4F6) !important;
-}
-[data-baseweb="popover"],
-[data-baseweb="menu"],
-[data-baseweb="popover"] > div {
-  background: var(--secondary-background-color, #1C2541) !important;
-  color: var(--text-color, #F4F4F6) !important;
-  border: 1px solid rgba(212,175,55,.25) !important;
-}
-[data-baseweb="menu"] li,
-[data-baseweb="menu"] [role="option"] {
-  background: var(--secondary-background-color, #1C2541) !important;
-  color: var(--text-color, #F4F4F6) !important;
-}
-[data-baseweb="menu"] li:hover,
-[data-baseweb="menu"] [role="option"]:hover,
-[data-baseweb="menu"] [aria-selected="true"] {
-  background: #D4AF37 !important;
-  color: #0A1128 !important;
-}
-
-/* ---------- Metrics / cards ---------- */
+/* Native Streamlit metrics --------------------------------------------- */
 [data-testid="stMetric"] {
-  background: var(--secondary-background-color, #1C2541) !important;
-  border: 1px solid rgba(212,175,55,.18);
+  background: var(--fos-card) !important;
+  border: 1px solid var(--fos-border) !important;
   border-radius: 14px;
   padding: 16px;
 }
-[data-testid="stMetricLabel"] {
-  color: var(--text-color, #F4F4F6) !important;
-  opacity: .72;
+[data-testid="stMetricLabel"],
+[data-testid="stMetricValue"],
+[data-testid="stMetricDelta"] {
+  color: var(--fos-text) !important;
 }
-[data-testid="stMetricValue"] {
-  color: var(--text-color, #F4F4F6) !important;
-}
+
+/* Custom FounderOS cards ------------------------------------------------ */
 .fos-card {
-  background: #1C2541;
-  border: 1px solid rgba(212,175,55,.16);
+  background: var(--fos-card);
+  border: 1px solid var(--fos-border);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--text-color) 12%, transparent);
   margin-bottom: 14px;
 }
-.fos-card-gold { border-color: rgba(212,175,55,.38); }
-.fos-card h3, .fos-card h4 { margin-top: 0; color: #F4F4F6 !important; }
-.fos-muted { color: #B7BFCE !important; }
-.fos-gold { color: #D4AF37 !important; }
+.fos-card-gold { border-color: color-mix(in srgb, var(--fos-accent) 48%, transparent); }
+.fos-card h3, .fos-card h4 { margin-top: 0; }
+.fos-muted { color: var(--fos-muted) !important; }
+.fos-gold { color: var(--fos-accent) !important; }
 .fos-small { font-size: .86rem; }
-.fos-kpi { font-size: 2rem; font-weight: 800; color: #F4F4F6; margin: 3px 0; }
+.fos-kpi { font-size: 2rem; font-weight: 800; color: var(--fos-text); margin: 3px 0; }
 .fos-pill {
   display:inline-block; padding:5px 10px; border-radius:999px;
-  border:1px solid rgba(212,175,55,.45); color:#F4F4F6;
-  background:rgba(212,175,55,.10); font-size:.78rem; font-weight:700;
+  border:1px solid color-mix(in srgb, var(--fos-accent) 50%, transparent);
+  color: var(--fos-text);
+  background: var(--fos-soft);
+  font-size:.78rem; font-weight:700;
 }
-.fos-brand { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.fos-brand {
+  display:flex; align-items:center; gap:12px; margin-bottom:8px;
+}
 .fos-logo {
   width:48px; height:48px; border-radius:13px; display:flex;
-  align-items:center; justify-content:center; background:#0A1128;
-  border:1px solid #D4AF37; color:#D4AF37; font-weight:900;
-  letter-spacing:-.06em; font-size:14px; box-shadow:0 8px 20px rgba(0,0,0,.22);
+  align-items:center; justify-content:center; background:var(--fos-bg);
+  border:1px solid var(--fos-accent); color:var(--fos-accent); font-weight:900;
+  letter-spacing:-.06em; font-size:14px;
+  box-shadow:0 8px 20px color-mix(in srgb, var(--text-color) 14%, transparent);
 }
 .fos-auth-logo {
   width:64px; height:64px; border-radius:17px; display:flex;
-  align-items:center; justify-content:center; background:#0A1128;
-  border:1px solid #D4AF37; color:#D4AF37; font-weight:900;
+  align-items:center; justify-content:center; background:var(--fos-bg);
+  border:1px solid var(--fos-accent); color:var(--fos-accent); font-weight:900;
   letter-spacing:-.08em; font-size:18px; margin-bottom:16px;
 }
 .fos-auth-wrap { padding-top: 7vh; }
-.fos-auth-title { font-size: 3.1rem; line-height:1; font-weight:900; margin:0; color:#F4F4F6; }
-.fos-auth-sub { font-size:1.05rem; color:#B7BFCE; margin-top:10px; max-width:600px; }
+.fos-auth-title { font-size: 3.1rem; line-height:1; font-weight:900; margin:0; color:var(--fos-text); }
+.fos-auth-sub { font-size:1.05rem; color:var(--fos-muted); margin-top:10px; max-width:600px; }
 .fos-feature {
-  background: #1C2541; border:1px solid rgba(212,175,55,.22);
+  background: var(--fos-card); border:1px solid color-mix(in srgb, var(--fos-accent) 24%, transparent);
   border-radius:16px; padding:18px; min-height:115px; margin-bottom:12px;
 }
-.fos-feature-title { color:#F4F4F6; font-weight:800; font-size:1rem; }
-.fos-feature-text { color:#B7BFCE; margin-top:6px; font-size:.9rem; line-height:1.45; }
+.fos-feature-title { color:var(--fos-text); font-weight:800; font-size:1rem; }
+.fos-feature-text { color:var(--fos-muted); margin-top:6px; font-size:.9rem; line-height:1.45; }
 .fos-feature-mark {
   width:32px; height:32px; display:inline-flex; align-items:center;
-  justify-content:center; border-radius:9px; background:rgba(212,175,55,.12);
-  color:#D4AF37; font-weight:900; margin-bottom:10px;
+  justify-content:center; border-radius:9px; background:var(--fos-soft);
+  color:var(--fos-accent); font-weight:900; margin-bottom:10px;
 }
-.fos-nav-label { color:#AEB5C4; font-size:.75rem; text-transform:uppercase; letter-spacing:.14em; }
-.fos-nav-current { color:#D4AF37; font-weight:800; }
+.fos-nav-label { color:var(--fos-muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.14em; }
+.fos-nav-current { color:var(--fos-accent); font-weight:800; }
 .fos-status {
-  border-radius:12px; padding:12px 14px; background:#1C2541;
-  border:1px solid rgba(212,175,55,.25); margin:8px 0 14px;
+  border-radius:12px; padding:12px 14px; background:var(--fos-card);
+  border:1px solid color-mix(in srgb, var(--fos-accent) 25%, transparent); margin:8px 0 14px;
 }
 .fos-purpose {
-  background: linear-gradient(145deg, #1C2541 0%, #17203A 100%);
-  border:1px solid rgba(212,175,55,.20); border-radius:14px;
+  background: var(--fos-card);
+  border:1px solid color-mix(in srgb, var(--fos-accent) 20%, transparent); border-radius:14px;
   padding:15px; margin-bottom:10px;
 }
-.fos-purpose strong { color:#F4F4F6; }
-.fos-purpose span { color:#B7BFCE; font-size:.87rem; }
+.fos-purpose strong { color:var(--fos-text); }
+.fos-purpose span { color:var(--fos-muted); font-size:.87rem; }
 .fos-section-note {
-  border-left:3px solid #D4AF37; padding:8px 12px; color:#C8CED9;
-  background:rgba(212,175,55,.06); border-radius:0 9px 9px 0;
+  border-left:3px solid var(--fos-accent); padding:8px 12px; color:var(--fos-text);
+  background:var(--fos-soft); border-radius:0 9px 9px 0;
 }
 .fos-empty {
-  text-align:center; padding:42px 24px; border:1px dashed rgba(244,244,246,.20);
-  border-radius:16px; background:#101936;
+  text-align:center; padding:42px 24px; border:1px dashed var(--fos-border);
+  border-radius:16px; background:var(--fos-card);
 }
 
-/* ---------- Expanders / tabs / dataframe ---------- */
+/* Expander and tabs ----------------------------------------------------- */
 [data-testid="stExpander"] {
-  background: var(--secondary-background-color, #1C2541) !important;
-  border-color: rgba(212,175,55,.18) !important;
+  background:var(--fos-card) !important;
+  border-color:var(--fos-border) !important;
 }
-[data-testid="stExpander"] summary,
-[data-testid="stExpander"] summary * {
-  color: var(--text-color, #F4F4F6) !important;
-}
+[data-testid="stExpander"] * { color:var(--fos-text) !important; }
 [data-baseweb="tab-list"] { gap:8px; }
-[data-baseweb="tab"] { color:var(--text-color, #F4F4F6) !important; }
-[data-baseweb="tab"][aria-selected="true"] { color:#D4AF37 !important; }
-[data-testid="stDataFrame"] {
-  border:1px solid rgba(212,175,55,.16); border-radius:12px; overflow:hidden;
+[data-baseweb="tab"] { color:var(--fos-muted) !important; }
+[data-baseweb="tab"][aria-selected="true"] { color:var(--fos-accent) !important; }
+
+/* Dropdown/popover options --------------------------------------------- */
+[data-baseweb="popover"] *,
+[data-baseweb="menu"] *,
+[role="listbox"] *,
+[role="option"] * {
+  color: var(--fos-text) !important;
+}
+[data-baseweb="popover"],
+[data-baseweb="menu"],
+[role="listbox"] {
+  background: var(--fos-card) !important;
+  border-color: var(--fos-border) !important;
+}
+[role="option"] {
+  background: var(--fos-card) !important;
+}
+[role="option"]:hover,
+[role="option"][aria-selected="true"] {
+  background: var(--fos-soft) !important;
 }
 
-/* ---------- LIGHT MODE ----------
-   Explicitly force the three areas that commonly disappear in light mode:
-   uploaded-file text, select/dropdown text, and top-level app controls. */
-@media (prefers-color-scheme: light) {
-  .stApp {
-    background: #F0F4F8 !important;
-    color: #0F2537 !important;
-  }
-  header[data-testid="stHeader"],
-  [data-testid="stHeader"],
-  [data-testid="stToolbar"] {
-    background: #0F2537 !important;
-  }
-  h1,h2,h3,h4,h5,h6,p,label,.stMarkdown,.stCaption {
-    color: #0F2537 !important;
-  }
-  [data-testid="stSidebar"] {
-    background: #0F2537 !important;
-  }
-  [data-testid="stFileUploader"],
-  [data-testid="stFileUploader"] section {
-    background: #FFFFFF !important;
-  }
-  [data-testid="stFileUploader"] *,
-  [data-testid="stFileUploader"] span,
-  [data-testid="stFileUploader"] small,
-  [data-testid="stFileUploader"] p,
-  [data-testid="stFileUploader"] label {
-    color: #000000 !important;
-  }
-  [data-testid="stFileUploaderFile"],
-  [data-testid="stFileUploaderFile"] > div {
-    background: #FFFFFF !important;
-    color: #000000 !important;
-  }
-  [data-testid="stFileUploaderFile"] *,
-  [data-testid="stFileUploaderFile"] span,
-  [data-testid="stFileUploaderFile"] small,
-  [data-testid="stFileUploaderFile"] p {
-    color: #000000 !important;
-  }
-  .stSelectbox div[data-baseweb="select"] > div,
-  .stMultiSelect div[data-baseweb="select"] > div {
-    background:#FFFFFF !important;
-    color:#000000 !important;
-  }
-  .stSelectbox div[data-baseweb="select"] span,
-  .stMultiSelect div[data-baseweb="select"] span {
-    color:#000000 !important;
-  }
-  [data-baseweb="popover"],
-  [data-baseweb="menu"],
-  [data-baseweb="popover"] > div,
-  [data-baseweb="menu"] li,
-  [data-baseweb="menu"] [role="option"] {
-    background:#FFFFFF !important;
-    color:#000000 !important;
-  }
-  [data-baseweb="menu"] li:hover,
-  [data-baseweb="menu"] [role="option"]:hover,
-  [data-baseweb="menu"] [aria-selected="true"] {
-    background:#D4AF37 !important;
-    color:#0A1128 !important;
-  }
-  .stTextInput input,
-  .stTextArea textarea {
-    background:#FFFFFF !important;
-    color:#000000 !important;
-  }
-  .stTextInput input::placeholder,
-  .stTextArea textarea::placeholder {
-    color:#627D98 !important;
-  }
-  .stButton > button,
-  .stDownloadButton > button,
-  button[kind="secondary"] {
-    background:#0F2537 !important;
-    color:#F4F4F6 !important;
-  }
-  button[kind="primary"] {
-    background:#D4AF37 !important;
-    color:#0A1128 !important;
-  }
+/* Dataframes ------------------------------------------------------------ */
+[data-testid="stDataFrame"] {
+  border:1px solid var(--fos-border); border-radius:12px; overflow:hidden;
+}
+
+/* Top Streamlit chrome / toolbar --------------------------------------- */
+[data-testid="stHeader"] {
+  background: var(--fos-bg) !important;
+}
+[data-testid="stToolbar"] * {
+  color: var(--fos-text) !important;
+}
+[data-testid="stToolbar"] button {
+  color: var(--fos-text) !important;
+  background: var(--fos-card) !important;
+  border-color: var(--fos-border) !important;
+}
+
+/* Links and interactive text ------------------------------------------- */
+a { color: var(--fos-accent) !important; }
+
+/* Native widgets should inherit the live theme rather than a fixed text
+   color. This keeps the FounderOS palette readable in both modes. */
+input, textarea, select, option {
+  color: var(--fos-text) !important;
 }
 </style>
         """,
         unsafe_allow_html=True,
     )
+
+
+inject_fos_css()
 
 
 # -----------------------------------------------------------------------------
@@ -829,7 +697,7 @@ def render_dashboard():
                     if not d.empty:
                         monthly = d.assign(period=d[dc].dt.to_period("M").astype(str)).groupby("period")[ac].sum().reset_index()
                         fig = px.line(monthly, x="period", y=ac, markers=True, title="Revenue trend")
-                        fig.update_layout(margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                        fig.update_layout(margin=dict(l=10, r=10, t=50, b=10), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                         st.plotly_chart(fig, use_container_width=True)
 
             strategy = a.get("strategy", {})
@@ -910,7 +778,7 @@ def render_finance():
                 if not d.empty:
                     monthly = d.assign(period=d[dc].dt.to_period("M").astype(str)).groupby("period")[ac].sum().reset_index()
                     fig = px.line(monthly, x="period", y=ac, markers=True, title="Revenue trend")
-                    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                     st.plotly_chart(fig, use_container_width=True)
         if expenses is not None:
             ec, ac = find_column(expenses, "category"), find_column(expenses, "amount")
@@ -918,7 +786,7 @@ def render_finance():
                 x = expenses.copy(); x[ac] = pd.to_numeric(x[ac], errors="coerce").fillna(0)
                 cat = x.groupby(ec)[ac].sum().sort_values(ascending=False).reset_index()
                 fig = px.bar(cat, x=ec, y=ac, title="Expenses by category")
-                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                 st.plotly_chart(fig, use_container_width=True)
     with right:
         st.subheader("What you get here")
@@ -966,7 +834,7 @@ def render_inventory():
                 x = df.copy(); x[qty] = pd.to_numeric(x[qty], errors="coerce").fillna(0)
                 grouped = x.groupby(product)[qty].sum().sort_values().head(15).reset_index()
                 fig = px.bar(grouped, x=qty, y=product, orientation="h", title="Products with the lowest stock")
-                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#F4F4F6"))
+                fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color=st.get_option("theme.textColor")))
                 st.plotly_chart(fig, use_container_width=True)
             if facts.get("inventory_cost_value") is None:
                 st.info("Inventory value is not calculated because a reliable purchase/unit-cost field was not found.")
