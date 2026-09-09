@@ -76,7 +76,11 @@ def inject_fos_css():
     st.markdown(
         """
 <style>
-/* FounderOS visual system ------------------------------------------------ */
+/* =========================================================================
+   FounderOS visual system
+   Uses Streamlit's own theme variables where possible so the same UI remains
+   readable in both Streamlit Light and Dark modes.
+   ========================================================================= */
 :root {
   --fos-navy: #0A1128;
   --fos-cream: #F4F4F6;
@@ -89,29 +93,72 @@ def inject_fos_css():
   --fos-cobalt: #185ADB;
 }
 
+/* ---------- Global canvas ---------- */
 .stApp {
-  background: #0A1128;
-  color: #F4F4F6;
+  background: var(--background-color, #0A1128) !important;
+  color: var(--text-color, #F4F4F6) !important;
 }
 .block-container {
   max-width: 1450px;
-  padding-top: 2rem;
+  padding-top: 1.35rem;
   padding-bottom: 4rem;
 }
 
-/* Hide Streamlit's automatic page list. FounderOS uses its own clean menu. */
+/* ---------- Streamlit top header / toolbar ----------
+   The Cloud Share/Edit/GitHub controls are platform controls. We keep them,
+   but make the header match FounderOS instead of leaving a white strip. */
+header[data-testid="stHeader"],
+[data-testid="stHeader"] {
+  background: #0A1128 !important;
+  border-bottom: 1px solid rgba(212,175,55,.20) !important;
+}
+[data-testid="stToolbar"] {
+  background: #0A1128 !important;
+  border-radius: 10px !important;
+}
+header[data-testid="stHeader"] button,
+header[data-testid="stHeader"] [role="button"],
+[data-testid="stToolbar"] button,
+[data-testid="stToolbar"] [role="button"] {
+  color: #F4F4F6 !important;
+}
+header[data-testid="stHeader"] svg,
+[data-testid="stToolbar"] svg {
+  color: #D4AF37 !important;
+  fill: currentColor !important;
+}
+header[data-testid="stHeader"] button:hover,
+[data-testid="stToolbar"] button:hover {
+  background: #1C2541 !important;
+  color: #D4AF37 !important;
+}
+
+/* ---------- Sidebar ---------- */
+[data-testid="stSidebar"] {
+  background: #0A1128 !important;
+  border-right: 1px solid rgba(212,175,55,.18) !important;
+}
+[data-testid="stSidebar"] * {
+  color: #F4F4F6;
+}
 [data-testid="stSidebarNav"] { display: none !important; }
 
-[data-testid="stSidebar"] {
-  background: #0A1128;
-  border-right: 1px solid rgba(212,175,55,.18);
+/* ---------- Headings and body text ----------
+   Use Streamlit's theme text variable so light mode becomes dark text. */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color, #F4F4F6) !important;
+  letter-spacing: -0.025em;
 }
-[data-testid="stSidebar"] * { color: #F4F4F6; }
+p, label, .stMarkdown, .stCaption {
+  color: var(--text-color, #F4F4F6);
+}
+.stCaption, [data-testid="stCaptionContainer"] {
+  color: var(--text-color, #F4F4F6) !important;
+  opacity: .78;
+}
 
-h1, h2, h3, h4 { color: #F4F4F6 !important; letter-spacing: -0.025em; }
-p, label, .stMarkdown, .stCaption { color: #D9DCE5; }
-
-/* Buttons: explicitly set readable text for dark and light Streamlit states. */
+/* ---------- Buttons ----------
+   Keep the CTA gold with dark text; secondary buttons use the slate theme. */
 .stButton > button,
 .stDownloadButton > button,
 button[kind="primary"],
@@ -130,47 +177,124 @@ button[kind="secondary"]:hover {
   background: #D4AF37 !important;
   border-color: #D4AF37 !important;
 }
+button[kind="primary"] {
+  background: #D4AF37 !important;
+  color: #0A1128 !important;
+  border-color: #D4AF37 !important;
+}
+button[kind="primary"]:hover {
+  background: #E5C866 !important;
+}
 
-/* Inputs */
+/* ---------- Text inputs ---------- */
 .stTextInput input,
-.stTextArea textarea,
-.stSelectbox div[data-baseweb="select"] > div,
-.stMultiSelect div[data-baseweb="select"] > div {
-  background: #1C2541 !important;
-  color: #F4F4F6 !important;
-  border-color: rgba(244,244,246,.18) !important;
+.stTextArea textarea {
+  background: var(--secondary-background-color, #1C2541) !important;
+  color: var(--text-color, #F4F4F6) !important;
+  border: 1px solid rgba(212,175,55,.28) !important;
 }
 .stTextInput input::placeholder,
-.stTextArea textarea::placeholder { color: #AEB5C4 !important; }
+.stTextArea textarea::placeholder {
+  color: var(--text-color, #F4F4F6) !important;
+  opacity: .55;
+}
 
+/* ---------- File uploader ----------
+   This is the main visibility fix. Streamlit renders the selected-file
+   chips/cards inside the uploader; give those elements an explicit
+   theme-aware background and text color. */
 [data-testid="stFileUploader"] {
-  background: #1C2541 !important;
+  background: var(--secondary-background-color, #1C2541) !important;
   border: 1px dashed rgba(212,175,55,.65) !important;
   border-radius: 14px !important;
+  overflow: hidden !important;
 }
-[data-testid="stFileUploader"] * { color: #F4F4F6 !important; }
+[data-testid="stFileUploader"] section {
+  background: var(--secondary-background-color, #1C2541) !important;
+}
+[data-testid="stFileUploader"] section > div {
+  color: var(--text-color, #F4F4F6) !important;
+}
+[data-testid="stFileUploader"] button {
+  color: #0A1128 !important;
+  background: #D4AF37 !important;
+  border-color: #D4AF37 !important;
+}
+[data-testid="stFileUploader"] small,
+[data-testid="stFileUploader"] label,
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p {
+  color: var(--text-color, #F4F4F6) !important;
+}
+/* Selected/uploaded file rows/chips */
+[data-testid="stFileUploaderFile"],
+[data-testid="stFileUploaderFile"] > div {
+  background: var(--background-color, #0A1128) !important;
+  color: var(--text-color, #F4F4F6) !important;
+  border-color: rgba(212,175,55,.25) !important;
+}
+[data-testid="stFileUploaderFile"] *,
+[data-testid="stFileUploaderFile"] span,
+[data-testid="stFileUploaderFile"] small,
+[data-testid="stFileUploaderFile"] p {
+  color: var(--text-color, #F4F4F6) !important;
+}
 
-/* Native Streamlit metric styling */
+/* ---------- Dropdown / selectbox ----------
+   Both the closed control and the popup options receive explicit colors. */
+.stSelectbox div[data-baseweb="select"] > div,
+.stMultiSelect div[data-baseweb="select"] > div {
+  background: var(--secondary-background-color, #1C2541) !important;
+  color: var(--text-color, #F4F4F6) !important;
+  border-color: rgba(212,175,55,.30) !important;
+}
+.stSelectbox div[data-baseweb="select"] span,
+.stMultiSelect div[data-baseweb="select"] span {
+  color: var(--text-color, #F4F4F6) !important;
+}
+[data-baseweb="popover"],
+[data-baseweb="menu"],
+[data-baseweb="popover"] > div {
+  background: var(--secondary-background-color, #1C2541) !important;
+  color: var(--text-color, #F4F4F6) !important;
+  border: 1px solid rgba(212,175,55,.25) !important;
+}
+[data-baseweb="menu"] li,
+[data-baseweb="menu"] [role="option"] {
+  background: var(--secondary-background-color, #1C2541) !important;
+  color: var(--text-color, #F4F4F6) !important;
+}
+[data-baseweb="menu"] li:hover,
+[data-baseweb="menu"] [role="option"]:hover,
+[data-baseweb="menu"] [aria-selected="true"] {
+  background: #D4AF37 !important;
+  color: #0A1128 !important;
+}
+
+/* ---------- Metrics / cards ---------- */
 [data-testid="stMetric"] {
-  background: #1C2541;
-  border: 1px solid rgba(244,244,246,.09);
+  background: var(--secondary-background-color, #1C2541) !important;
+  border: 1px solid rgba(212,175,55,.18);
   border-radius: 14px;
   padding: 16px;
 }
-[data-testid="stMetricLabel"] { color: #BFC6D4 !important; }
-[data-testid="stMetricValue"] { color: #F4F4F6 !important; }
-
-/* Custom FounderOS cards */
+[data-testid="stMetricLabel"] {
+  color: var(--text-color, #F4F4F6) !important;
+  opacity: .72;
+}
+[data-testid="stMetricValue"] {
+  color: var(--text-color, #F4F4F6) !important;
+}
 .fos-card {
   background: #1C2541;
-  border: 1px solid rgba(244,244,246,.10);
+  border: 1px solid rgba(212,175,55,.16);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
   margin-bottom: 14px;
 }
 .fos-card-gold { border-color: rgba(212,175,55,.38); }
-.fos-card h3, .fos-card h4 { margin-top: 0; }
+.fos-card h3, .fos-card h4 { margin-top: 0; color: #F4F4F6 !important; }
 .fos-muted { color: #B7BFCE !important; }
 .fos-gold { color: #D4AF37 !important; }
 .fos-small { font-size: .86rem; }
@@ -180,9 +304,7 @@ button[kind="secondary"]:hover {
   border:1px solid rgba(212,175,55,.45); color:#F4F4F6;
   background:rgba(212,175,55,.10); font-size:.78rem; font-weight:700;
 }
-.fos-brand {
-  display:flex; align-items:center; gap:12px; margin-bottom:8px;
-}
+.fos-brand { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
 .fos-logo {
   width:48px; height:48px; border-radius:13px; display:flex;
   align-items:center; justify-content:center; background:#0A1128;
@@ -231,28 +353,110 @@ button[kind="secondary"]:hover {
   border-radius:16px; background:#101936;
 }
 
-/* Expander and tabs */
-[data-testid="stExpander"] { background:#1C2541 !important; border-color:rgba(244,244,246,.12) !important; }
+/* ---------- Expanders / tabs / dataframe ---------- */
+[data-testid="stExpander"] {
+  background: var(--secondary-background-color, #1C2541) !important;
+  border-color: rgba(212,175,55,.18) !important;
+}
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary * {
+  color: var(--text-color, #F4F4F6) !important;
+}
 [data-baseweb="tab-list"] { gap:8px; }
-[data-baseweb="tab"] { color:#B7BFCE !important; }
+[data-baseweb="tab"] { color:var(--text-color, #F4F4F6) !important; }
 [data-baseweb="tab"][aria-selected="true"] { color:#D4AF37 !important; }
+[data-testid="stDataFrame"] {
+  border:1px solid rgba(212,175,55,.16); border-radius:12px; overflow:hidden;
+}
 
-/* Dataframes */
-[data-testid="stDataFrame"] { border:1px solid rgba(244,244,246,.10); border-radius:12px; overflow:hidden; }
-
-/* Light theme ------------------------------------------------------------- */
-body[data-fos-theme="light"] .stApp { background:#F0F4F8; color:#0F2537; }
-body[data-fos-theme="light"] h1,
-body[data-fos-theme="light"] h2,
-body[data-fos-theme="light"] h3,
-body[data-fos-theme="light"] h4 { color:#0F2537 !important; }
+/* ---------- LIGHT MODE ----------
+   Explicitly force the three areas that commonly disappear in light mode:
+   uploaded-file text, select/dropdown text, and top-level app controls. */
+@media (prefers-color-scheme: light) {
+  .stApp {
+    background: #F0F4F8 !important;
+    color: #0F2537 !important;
+  }
+  header[data-testid="stHeader"],
+  [data-testid="stHeader"],
+  [data-testid="stToolbar"] {
+    background: #0F2537 !important;
+  }
+  h1,h2,h3,h4,h5,h6,p,label,.stMarkdown,.stCaption {
+    color: #0F2537 !important;
+  }
+  [data-testid="stSidebar"] {
+    background: #0F2537 !important;
+  }
+  [data-testid="stFileUploader"],
+  [data-testid="stFileUploader"] section {
+    background: #FFFFFF !important;
+  }
+  [data-testid="stFileUploader"] *,
+  [data-testid="stFileUploader"] span,
+  [data-testid="stFileUploader"] small,
+  [data-testid="stFileUploader"] p,
+  [data-testid="stFileUploader"] label {
+    color: #000000 !important;
+  }
+  [data-testid="stFileUploaderFile"],
+  [data-testid="stFileUploaderFile"] > div {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  [data-testid="stFileUploaderFile"] *,
+  [data-testid="stFileUploaderFile"] span,
+  [data-testid="stFileUploaderFile"] small,
+  [data-testid="stFileUploaderFile"] p {
+    color: #000000 !important;
+  }
+  .stSelectbox div[data-baseweb="select"] > div,
+  .stMultiSelect div[data-baseweb="select"] > div {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+  }
+  .stSelectbox div[data-baseweb="select"] span,
+  .stMultiSelect div[data-baseweb="select"] span {
+    color:#000000 !important;
+  }
+  [data-baseweb="popover"],
+  [data-baseweb="menu"],
+  [data-baseweb="popover"] > div,
+  [data-baseweb="menu"] li,
+  [data-baseweb="menu"] [role="option"] {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+  }
+  [data-baseweb="menu"] li:hover,
+  [data-baseweb="menu"] [role="option"]:hover,
+  [data-baseweb="menu"] [aria-selected="true"] {
+    background:#D4AF37 !important;
+    color:#0A1128 !important;
+  }
+  .stTextInput input,
+  .stTextArea textarea {
+    background:#FFFFFF !important;
+    color:#000000 !important;
+  }
+  .stTextInput input::placeholder,
+  .stTextArea textarea::placeholder {
+    color:#627D98 !important;
+  }
+  .stButton > button,
+  .stDownloadButton > button,
+  button[kind="secondary"] {
+    background:#0F2537 !important;
+    color:#F4F4F6 !important;
+  }
+  button[kind="primary"] {
+    background:#D4AF37 !important;
+    color:#0A1128 !important;
+  }
+}
 </style>
         """,
         unsafe_allow_html=True,
     )
-
-
-inject_fos_css()
 
 
 # -----------------------------------------------------------------------------
