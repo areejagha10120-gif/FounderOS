@@ -1,0 +1,9 @@
+streamlit
+pandas
+openpyxl
+plotly
+google-genai
+supabase
+python-dotenv
+pydantic
+numpy
